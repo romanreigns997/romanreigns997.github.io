@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator wydajności</title>
+  <style>
+    body {
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #ffffff;
+    }
+    input, button {
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .hidden {
+      display: none;
+    }
+    #logo {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kalkulator wydajności</h1>
+
+  <label for="osoby">Ilość osób:</label>
+  <input type="number" id="osoby" min="1" value="1" onchange="generateGodziny()" />
+
+  <div id="godziny-container"></div>
+
+  <label for="stropy">Metry stropów łącznie:</label>
+  <input type="tel" id="stropy" placeholder="np. 2,5+3,1+4,0" />
+
+  <label for="dachy">Metry dachów łącznie:</label>
+  <input type="tel" id="dachy" placeholder="np. 5+2,6+4,4" />
+
+  <button onclick="obliczWydajnosc()">Oblicz wydajność</button>
+
+  <div class="result" id="wynik"></div>
+
+  <div id="legenda">
+    <h3>LEGENDA</h3>
+    <p>Metry brane pod uwagę:</p>
+    <ul>
+      <li>stropy – 14.75 m² na osobę na 8h</li>
+      <li>dachy – 15 m² na osobę na 8h</li>
+    </ul>
+    <p>Okno dachowe = + 2,60 m²</p>
+  </div>
+
+  <script>
+    function generateGodziny() {
+      const container = document.getElementById('godziny-container');
+      container.innerHTML = '';
+      const ilosc = parseInt(document.getElementById('osoby').value);
+      for (let i = 0; i < ilosc; i++) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.placeholder = 'Godziny osoby ' + (i + 1);
+        input.id = 'godzina-' + i;
+        input.step = '0.1';
+        container.appendChild(input);
+      }
+    }
+
+    function parsePolishExpression(expr) {
+      try {
+        expr = expr.replace(/,/g, '.');
+        return Function('"use strict";return (' + expr + ')')();
+      } catch {
+        return 0;
+      }
+    }
+
+    function obliczWydajnosc() {
+      const ilosc = parseInt(document.getElementById('osoby').value);
+      let sumaGodzin = 0;
+      for (let i = 0; i < ilosc; i++) {
+        const val = parseFloat(document.getElementById('godzina-' + i).value) || 0;
+        sumaGodzin += val;
+      }
+
+      const stropy = parsePolishExpression(document.getElementById('stropy').value);
+      const dachy = parsePolishExpression(document.getElementById('dachy').value);
+
+      const normaStropy = 14.75;
+      const normaDachy = 15;
+
+      const wydajnoscStropy = (stropy / normaStropy) / (sumaGodzin / 8) * 100;
+      const wydajnoscDachy = (dachy / normaDachy) / (sumaGodzin / 8) * 100;
+      const wydajnoscLaczna = wydajnoscStropy + wydajnoscDachy;
+
+      document.getElementById('wynik').innerText =
+        'Wydajność stropów: ' + wydajnoscStropy.toFixed(2) + '%\n' +
+        'Wydajność dachów: ' + wydajnoscDachy.toFixed(2) + '%\n' +
+        'Wydajność łączna: ' + wydajnoscLaczna.toFixed(2) + '%';
+    }
+
+    generateGodziny();
+  </script>
+</body>
+</html>
