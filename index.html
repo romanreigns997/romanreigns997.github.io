@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -6,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kalkulator wydajności</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     body {
       background: linear-gradient(145deg, #1a1a1a, #2b2b2b);
       color: #ffffff;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Roboto', sans-serif;
       padding: 20px;
       max-width: 500px;
       margin: auto;
@@ -106,14 +105,20 @@
       background-color: #121212;
       border-left: 4px solid #00bfff;
       border-radius: 12px;
-      white-space: pre-wrap;
     }
 
     .info-section h3 {
       color: #00bfff;
       font-size: 18px;
       font-weight: bold;
+      margin-top: 20px;
       margin-bottom: 10px;
+    }
+
+    .info-section p,
+    .info-section ul {
+      margin-left: 10px;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -131,6 +136,15 @@
   <label for="dachy">Metry dachów łącznie:</label>
   <input type="tel" id="dachy" placeholder="np. 5+2,6+4,4" />
 
+  <label>
+    <input type="checkbox" id="dodaj-okna" onchange="toggleOknaInput()" />
+    Dodaj okna dachowe
+  </label>
+  <div id="okna-container" style="display:none;">
+    <label for="okna">Liczba okien dachowych:</label>
+    <input type="number" id="okna" min="0" value="0" />
+  </div>
+
   <button onclick="obliczWydajnosc()">Oblicz wydajność</button>
 
   <div class="result" id="wynik"></div>
@@ -146,46 +160,52 @@
   </div>
 
   <div class="info-section">
-    <h3>------Piętro i kolory góra dół-----</h3>
-    W piętrze obracać szerokie frezy do dołu (wyblakłe), niebieski to z góry. 
-    Mocny brąz cięcie z góry.
-    Mocny niebieski cięcie z góry.
-    Jasne wszystko z dołu (frez)<----(tak robić w miarę możliwości!!!!) 
-    Skosy jasnym do góry
+    <h3>Piętro i kolory góra/dół</h3>
+    <p>
+      W piętrze obracać szerokie frezy do dołu (wyblakłe), niebieski to z góry.<br>
+      Mocny brąz: cięcie z góry.<br>
+      Mocny niebieski: cięcie z góry.<br>
+      Jasne – wszystko z dołu (frez). <strong><em>&larr; tak robić w miarę możliwości!</em></strong><br>
+      Skosy jasnym do góry
+    </p>
 
-    <h3>USUWAĆ STANDARDOWE BELKI \/</h3>
-    60x80x2570
-    80×80×2570
-    60×120x2540
-    90x120x2540
-    100×120×2540
-    60x180x2540
-    90x180x2540
-    100x180x2540 
-    USUWAĆ STANDARDOWE BELKI /
-    <h3>-----CIĘCIE ŁAT-----</h3>
-    piła w tył, nie inaczej
-    POD MASZYNA (OPCJE-KOLO ZĘBATE)
-    DRUKARKA: LICZBA ETYKIET PRZY
-    STOSIE:
-    NA STOS 1 ETYKIETA = ŁATY STROPOWE(TYLKO)
-    NA ELEMENT KONSTRUKCYJNY: RESZTA
+    <h3>USUWAĆ STANDARDOWE BELKI</h3>
+    <ul>
+      <li>60x80x2570</li>
+      <li>80×80×2570</li>
+      <li>60×120x2540</li>
+      <li>90x120x2540</li>
+      <li>100×120×2540</li>
+      <li>60x180x2540</li>
+      <li>90x180x2540</li>
+      <li>100x180x2540</li>
+    </ul>
 
-    Łaty:
-    Liczba sztuk zadania: ilość lat do docięcia
-    Pakiet: numer stropa
-    Cięcie piłą w tył: wymiar wzdłużny to długość lat -5mm
-    Reszta zostaje
+    <h3>CIĘCIE ŁAT</h3>
+    <p>
+      Piła w tył, nie inaczej.<br>
+      POD MASZYNĄ (OPCJE – KOŁO ZĘBATE)<br>
+      DRUKARKA: LICZBA ETYKIET PRZY STOSIE:<br>
+      NA STOS 1 ETYKIETA = ŁATY STROPOWE (TYLKO)<br>
+      NA ELEMENT KONSTRUKCYJNY: RESZTA<br><br>
+      <strong>Łaty:</strong><br>
+      Liczba sztuk zadania: ilość łat do docięcia<br>
+      Pakiet: numer stropa<br>
+      Cięcie piłą w tył: wymiar wzdłużny to długość łat -5mm<br>
+      Reszta zostaje
+    </p>
 
-    <h3>---BŁĘDY----</h3>
-    Resztka drzewnego nie jest zajęta: podsunąć po lewej stronie do blachy.
-    Błąd krańcowego piły? - reset (żółty) i przetwarzanie
-    Rolka nie jest zajęta: dopchnąć belkę
-    Przy rolce z kołem (żółta dioda z dołu off-dopchnac) reset, cofnąć, puścić i docisnąć
-    Piła się kręci, puszczasz start i nie idzie - reset żółty i na nowo start
-    Drewno surowe jest za krótkie : dopchnąć do blachy (dojechać przyciskiem)i powinno iść, jeśli nie to reset i jeszcze raz początek
-    Rolka pozycjonująca: reset i start
-    Czujka rozłącza - wyjechać i obrócić belkę.
+    <h3>BŁĘDY</h3>
+    <p>
+      Resztka drzewnego nie jest zajęta: podsunąć po lewej stronie do blachy.<br>
+      Błąd krańcowego piły? – reset (żółty) i przetwarzanie.<br>
+      Rolka nie jest zajęta: dopchnąć belkę.<br>
+      Przy rolce z kołem (żółta dioda z dołu off – dopchnąć), reset, cofnąć, puścić i docisnąć.<br>
+      Piła się kręci, puszczasz start i nie idzie – reset żółty i na nowo start.<br>
+      Drewno surowe jest za krótkie: dopchnąć do blachy (dojechać przyciskiem) i powinno iść, jeśli nie to reset i jeszcze raz początek.<br>
+      Rolka pozycjonująca: reset i start.<br>
+      Czujka rozłącza – wyjechać i obrócić belkę.
+    </p>
   </div>
 
   <script>
@@ -211,6 +231,12 @@
       }
     }
 
+    function toggleOknaInput() {
+      const checkbox = document.getElementById('dodaj-okna');
+      const container = document.getElementById('okna-container');
+      container.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
     function parsePolishExpression(expr) {
       try {
         expr = expr.replace(/,/g, '.');
@@ -230,19 +256,22 @@
 
       const stropy = parsePolishExpression(document.getElementById('stropy').value);
       const dachy = parsePolishExpression(document.getElementById('dachy').value);
+      const okna = document.getElementById('dodaj-okna').checked
+        ? parseInt(document.getElementById('okna').value) || 0
+        : 0;
+      const metryOkien = okna * 2.6;
+      const dachySumaryczne = dachy + metryOkien;
 
       const normaStropy = 14.75;
       const normaDachy = 15;
 
       const wydajnoscStropy = (stropy / normaStropy) / (sumaGodzin / 8) * 100;
-      const wydajnoscDachy = (dachy / normaDachy) / (sumaGodzin / 8) * 100;
+      const wydajnoscDachy = (dachySumaryczne / normaDachy) / (sumaGodzin / 8) * 100;
       const wydajnoscLaczna = wydajnoscStropy + wydajnoscDachy;
 
       const wynikTekst =
-        'Wydajność stropów: ' + wydajnoscStropy.toFixed(2) + '%
-' +
-        'Wydajność dachów: ' + wydajnoscDachy.toFixed(2) + '%
-' +
+        'Wydajność stropów: ' + wydajnoscStropy.toFixed(2) + '%\n' +
+        'Wydajność dachów: ' + wydajnoscDachy.toFixed(2) + '%\n' +
         'Wydajność łączna: ' + wydajnoscLaczna.toFixed(2) + '%';
 
       document.getElementById('wynik').innerText = wynikTekst;
