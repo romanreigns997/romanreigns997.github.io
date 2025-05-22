@@ -44,6 +44,49 @@
 <body>
   <div class="container">
     <h2>Demo: Zaawansowane tworzenie elementu (BTL-style)</h2>
+
+    <label>ID belki</label>
+    <input id="id" placeholder="np. B001" />
+
+    <label>Długość (mm)</label>
+    <input id="length" type="number" placeholder="np. 4000" />
+
+    <label>Szerokość (mm)</label>
+    <input id="width" type="number" placeholder="np. 120" />
+
+    <label>Wysokość (mm)</label>
+    <input id="height" type="number" placeholder="np. 60" />
+
+    <label>Materiał</label>
+    <input id="material" placeholder="np. KVH C24" />
+
+    <label>Nachylenie początkowe</label>
+    <input id="angleStart" placeholder="np. 0°" />
+
+    <label>Nachylenie końcowe</label>
+    <input id="angleEnd" placeholder="np. 0°" />
+
+    <label>Obrót elementu</label>
+    <input id="rotation" placeholder="np. 0°" />
+
+    <label>Otwory (hole)</label>
+    <input id="hole" placeholder="np. Ø10 / 100 mm od czoła" />
+
+    <label>Wpust (slot)</label>
+    <input id="slot" placeholder="np. 40x10" />
+
+    <label>Czop (tenon)</label>
+    <input id="tenon" placeholder="np. 40x12" />
+
+    <label>Kanał (channel)</label>
+    <input id="channel" placeholder="np. 30x15" />
+
+    <label>Cięcie (cut)</label>
+    <input id="cut" placeholder="np. piła ukośna" />
+
+    <label>Notatki</label>
+    <textarea id="notes" rows="3" placeholder="Uwagi dodatkowe..."></textarea>
+
     <button onclick="generateBTL(); draw3D();">Generuj</button>
     <h3>Wynik:</h3>
     <pre id="output">(brak danych)</pre>
