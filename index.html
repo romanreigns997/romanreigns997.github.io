@@ -44,11 +44,7 @@
 <body>
   <div class="container">
     <h2>Demo: Zaawansowane tworzenie elementu (BTL-style)</h2>
-    <!-- [INPUTS and UI OMITTED for BREVITY] -->
-    <!-- ... wszystkie pola wejściowe i przyciski ... -->
-
     <button onclick="generateBTL(); draw3D();">Generuj</button>
-
     <h3>Wynik:</h3>
     <pre id="output">(brak danych)</pre>
   </div>
@@ -57,7 +53,7 @@
 
   <script>
     function generateBTL() {
-      const getValue = id => document.getElementById(id).value;
+      const getValue = id => document.getElementById(id)?.value || '';
       const fields = ["id", "length", "width", "height", "material", "angleStart", "angleEnd", "rotation", "hole", "slot", "tenon", "channel", "cut", "notes"];
       let output = '[ELEMENT]';
       fields.forEach(id => {
@@ -89,24 +85,27 @@
       const ambient = new THREE.AmbientLight(0x404040);
       scene.add(ambient);
 
-      const length = parseFloat(document.getElementById('length').value || 4000);
-      const width = parseFloat(document.getElementById('width').value || 120);
-      const height = parseFloat(document.getElementById('height').value || 60);
+      const length = parseFloat(document.getElementById('length')?.value || 4000);
+      const width = parseFloat(document.getElementById('width')?.value || 120);
+      const height = parseFloat(document.getElementById('height')?.value || 60);
 
       const beamGeometry = new THREE.BoxGeometry(length / 10, height / 10, width / 10);
       const beamMaterial = new THREE.MeshStandardMaterial({ color: 0xdeb887 });
       const beam = new THREE.Mesh(beamGeometry, beamMaterial);
       scene.add(beam);
 
-      // Etap 1: Piła (na jednym końcu)
+      const tools = [];
+
+      // Piła
       const saw = new THREE.Mesh(
         new THREE.BoxGeometry(10, 1, width / 10),
         new THREE.MeshStandardMaterial({ color: 0x0000ff })
       );
       saw.position.set(length / 20, 0, 0);
       scene.add(saw);
+      tools.push(saw);
 
-      // Etap 2: Frez palcowy pionowy (obracający się)
+      // Frez palcowy
       const cutter = new THREE.Mesh(
         new THREE.CylinderGeometry(5, 5, 20, 32),
         new THREE.MeshStandardMaterial({ color: 0xff0000 })
@@ -114,8 +113,9 @@
       cutter.rotation.x = Math.PI / 2;
       cutter.position.set(-length / 20, 0, 0);
       scene.add(cutter);
+      tools.push(cutter);
 
-      // Etap 3: Wiertło poziome
+      // Wiertło poziome
       const drill = new THREE.Mesh(
         new THREE.CylinderGeometry(2, 2, 15, 16),
         new THREE.MeshStandardMaterial({ color: 0x00aa00 })
@@ -123,14 +123,34 @@
       drill.rotation.z = Math.PI / 2;
       drill.position.set(0, 0, -width / 20);
       scene.add(drill);
+      tools.push(drill);
 
-      // Etap 4: Narzędzie kanału
+      // Narzędzie kanału
       const channelTool = new THREE.Mesh(
         new THREE.BoxGeometry(5, 5, 10),
         new THREE.MeshStandardMaterial({ color: 0x8888ff })
       );
       channelTool.position.set(0, height / 20, 0);
       scene.add(channelTool);
+      tools.push(channelTool);
+
+      // Wpust pionowy (slot)
+      const slotTool = new THREE.Mesh(
+        new THREE.BoxGeometry(4, 12, 4),
+        new THREE.MeshStandardMaterial({ color: 0xff9900 })
+      );
+      slotTool.position.set(length / 40, 0, width / 40);
+      scene.add(slotTool);
+      tools.push(slotTool);
+
+      // Czop (tenon) – symulowany jako frez poziomy
+      const tenonTool = new THREE.Mesh(
+        new THREE.BoxGeometry(12, 4, 4),
+        new THREE.MeshStandardMaterial({ color: 0x999900 })
+      );
+      tenonTool.position.set(-length / 40, 0, -width / 40);
+      scene.add(tenonTool);
+      tools.push(tenonTool);
 
       function animate() {
         requestAnimationFrame(animate);
