@@ -1,210 +1,283 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Demo Hundegger SPEED-Cut (zaawansowane)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator wydajności</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background: #fff;
+      background: linear-gradient(145deg, #1a1a1a, #2b2b2b);
+      color: #ffffff;
+      font-family: 'Roboto', sans-serif;
       padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 30px rgba(0, 255, 195, 0.1);
+      border-radius: 20px;
     }
-    input, select, button, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
+
+    h1 {
+      text-align: center;
       margin-bottom: 20px;
-      font-size: 16px;
+      color: #00ffc3;
+      text-shadow: 2px 2px 10px #00ffc360;
+      font-size: 26px;
+      letter-spacing: 1px;
     }
-    pre {
-      background-color: #272822;
-      color: #f8f8f2;
-      padding: 15px;
-      border-radius: 5px;
-      white-space: pre-wrap;
-    }
-    canvas {
+
+    label {
+      font-weight: bold;
       display: block;
-      margin: 40px auto;
-      background: #ddd;
-      border: 1px solid #999;
+      margin-top: 15px;
+      color: #9efff4;
+    }
+
+    input[type="number"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 10px;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      box-shadow: inset 0 0 5px #000;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      background: linear-gradient(90deg, #00ffc3, #00bfa5);
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffc3aa;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px #00ffc3;
+    }
+
+    .result {
+      background-color: #111;
+      border: 1px solid #00ffc3;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 255, 195, 0.3);
+      white-space: pre-line;
+    }
+
+    #legenda {
+      margin-top: 30px;
+      background-color: #191919;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 6px solid #00ffc3;
+      box-shadow: inset 0 0 10px #00ffc340;
+    }
+
+    #legenda h3 {
+      margin-top: 0;
+      color: #00ffc3;
+      font-size: 20px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .info-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #121212;
+      border-left: 4px solid #00bfff;
+      border-radius: 12px;
+    }
+
+    .info-section h3 {
+      color: #00bfff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .info-section p,
+    .info-section ul {
+      margin-left: 10px;
+      line-height: 1.6;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h2>Demo: Zaawansowane tworzenie elementu (BTL-style)</h2>
+  <h1>Kalkulator wydajności</h1>
 
-    <label>ID belki</label>
-    <input id="id" placeholder="np. B001" />
+  <label for="osoby">Ilość osób:</label>
+  <input type="number" id="osoby" min="1" value="1" onchange="generateGodziny()" />
 
-    <label>Długość (mm)</label>
-    <input id="length" type="number" placeholder="np. 4000" />
+  <div id="godziny-container"></div>
 
-    <label>Szerokość (mm)</label>
-    <input id="width" type="number" placeholder="np. 120" />
+  <label for="stropy">Metry stropów łącznie:</label>
+  <input type="tel" id="stropy" placeholder="np. 2,5+3,1+4,0" />
 
-    <label>Wysokość (mm)</label>
-    <input id="height" type="number" placeholder="np. 60" />
+  <label for="dachy">Metry dachów łącznie:</label>
+  <input type="tel" id="dachy" placeholder="np. 5+2,6+4,4" />
 
-    <label>Materiał</label>
-    <input id="material" placeholder="np. KVH C24" />
-
-    <label>Nachylenie początkowe</label>
-    <input id="angleStart" placeholder="np. 0°" />
-
-    <label>Nachylenie końcowe</label>
-    <input id="angleEnd" placeholder="np. 0°" />
-
-    <label>Obrót elementu</label>
-    <input id="rotation" placeholder="np. 0°" />
-
-    <label>Otwory (hole)</label>
-    <input id="hole" placeholder="np. Ø10 / 100 mm od czoła" />
-
-    <label>Wpust (slot)</label>
-    <input id="slot" placeholder="np. 40x10" />
-
-    <label>Czop (tenon)</label>
-    <input id="tenon" placeholder="np. 40x12" />
-
-    <label>Kanał (channel)</label>
-    <input id="channel" placeholder="np. 30x15" />
-
-    <label>Cięcie (cut)</label>
-    <input id="cut" placeholder="np. piła ukośna" />
-
-    <label>Notatki</label>
-    <textarea id="notes" rows="3" placeholder="Uwagi dodatkowe..."></textarea>
-
-    <button onclick="generateBTL(); draw3D();">Generuj</button>
-    <h3>Wynik:</h3>
-    <pre id="output">(brak danych)</pre>
+  <label>
+    <input type="checkbox" id="dodaj-okna" onchange="toggleOknaInput()" />
+    Dodaj okna dachowe
+  </label>
+  <div id="okna-container" style="display:none;">
+    <label for="okna">Liczba okien dachowych:</label>
+    <input type="number" id="okna" min="0" value="0" />
   </div>
 
-  <canvas id="scene3d" width="800" height="500"></canvas>
+  <button onclick="obliczWydajnosc()">Oblicz wydajność</button>
+
+  <div class="result" id="wynik"></div>
+
+  <div id="legenda">
+    <h3>LEGENDA</h3>
+    <p>Metry brane pod uwagę:</p>
+    <ul>
+      <li>stropy – 14.75 m² na osobę na 8h</li>
+      <li>dachy – 15 m² na osobę na 8h</li>
+    </ul>
+    <p>Okno dachowe = + 2,60 m²</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Piętro i kolory góra/dół</h3>
+    <p>
+      W piętrze obracać szerokie frezy do dołu (wyblakłe), niebieski to z góry.<br>
+      Mocny brąz: cięcie z góry.<br>
+      Mocny niebieski: cięcie z góry.<br>
+      Jasne – wszystko z dołu (frez). <strong><em>&larr; tak robić w miarę możliwości!</em></strong><br>
+      Skosy jasnym do góry
+    </p>
+
+    <h3>USUWAĆ STANDARDOWE BELKI</h3>
+    <ul>
+      <li>60x80x2570</li>
+      <li>80×80×2570</li>
+      <li>60×120x2540</li>
+      <li>90x120x2540</li>
+      <li>100×120×2540</li>
+      <li>60x180x2540</li>
+      <li>90x180x2540</li>
+      <li>100x180x2540</li>
+    </ul>
+
+    <h3>CIĘCIE ŁAT</h3>
+    <p>
+      Piła w tył, nie inaczej.<br>
+      POD MASZYNĄ (OPCJE – KOŁO ZĘBATE)<br>
+      DRUKARKA: LICZBA ETYKIET PRZY STOSIE:<br>
+      NA STOS 1 ETYKIETA = ŁATY STROPOWE (TYLKO)<br>
+      NA ELEMENT KONSTRUKCYJNY: RESZTA<br><br>
+      <strong>Łaty:</strong><br>
+      Liczba sztuk zadania: ilość łat do docięcia<br>
+      Pakiet: numer stropa<br>
+      Cięcie piłą w tył: wymiar wzdłużny to długość łat -5mm<br>
+      Reszta zostaje
+    </p>
+
+    <h3>BŁĘDY</h3>
+    <p>
+      Resztka drzewnego nie jest zajęta: podsunąć po lewej stronie do blachy.<br>
+      Błąd krańcowego piły? – reset (żółty) i przetwarzanie.<br>
+      Rolka nie jest zajęta: dopchnąć belkę.<br>
+      Przy rolce z kołem (żółta dioda z dołu off – dopchnąć), reset, cofnąć, puścić i docisnąć.<br>
+      Piła się kręci, puszczasz start i nie idzie – reset żółty i na nowo start.<br>
+      Drewno surowe jest za krótkie: dopchnąć do blachy (dojechać przyciskiem) i powinno iść, jeśli nie to reset i jeszcze raz początek.<br>
+      Rolka pozycjonująca: reset i start.<br>
+      Czujka rozłącza – wyjechać i obrócić belkę.
+    </p>
+  </div>
 
   <script>
-    function generateBTL() {
-      const getValue = id => document.getElementById(id)?.value || '';
-      const fields = ["id", "length", "width", "height", "material", "angleStart", "angleEnd", "rotation", "hole", "slot", "tenon", "channel", "cut", "notes"];
-      let output = '[ELEMENT]';
-      fields.forEach(id => {
-        const val = getValue(id);
-        if (val) output += `\n${id.toUpperCase()}=${val}`;
-      });
-      document.getElementById('output').textContent = output;
+    function generateGodziny() {
+      const container = document.getElementById('godziny-container');
+      container.innerHTML = '';
+      const ilosc = parseInt(document.getElementById('osoby').value);
+      for (let i = 0; i < ilosc; i++) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.placeholder = 'Godziny osoby ' + (i + 1);
+        input.id = 'godzina-' + i;
+        input.step = '0.1';
+        input.style.marginTop = '10px';
+        input.style.width = '100%';
+        input.style.borderRadius = '8px';
+        input.style.border = 'none';
+        input.style.backgroundColor = '#333';
+        input.style.color = '#fff';
+        input.style.padding = '10px';
+        input.style.boxShadow = 'inset 0 0 5px #000';
+        container.appendChild(input);
+      }
     }
 
-    function draw3D() {
-      const canvas = document.getElementById('scene3d');
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-      renderer.setSize(canvas.width, canvas.height);
+    function toggleOknaInput() {
+      const checkbox = document.getElementById('dodaj-okna');
+      const container = document.getElementById('okna-container');
+      container.style.display = checkbox.checked ? 'block' : 'none';
+    }
 
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xf0f0f0);
+    function parsePolishExpression(expr) {
+      try {
+        expr = expr.replace(/,/g, '.');
+        return Function('"use strict";return (' + expr + ')')();
+      } catch {
+        return 0;
+      }
+    }
 
-      const camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 10000);
-      camera.position.set(300, 300, 800);
-      camera.lookAt(0, 0, 0);
-
-      const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      const light = new THREE.DirectionalLight(0xffffff, 1);
-      light.position.set(100, 100, 200);
-      scene.add(light);
-
-      const ambient = new THREE.AmbientLight(0x404040);
-      scene.add(ambient);
-
-      const length = parseFloat(document.getElementById('length')?.value || 4000);
-      const width = parseFloat(document.getElementById('width')?.value || 120);
-      const height = parseFloat(document.getElementById('height')?.value || 60);
-
-      const beamGeometry = new THREE.BoxGeometry(length / 10, height / 10, width / 10);
-      const beamMaterial = new THREE.MeshStandardMaterial({ color: 0xdeb887 });
-      const beam = new THREE.Mesh(beamGeometry, beamMaterial);
-      scene.add(beam);
-
-      const tools = [];
-
-      // Piła
-      const saw = new THREE.Mesh(
-        new THREE.BoxGeometry(10, 1, width / 10),
-        new THREE.MeshStandardMaterial({ color: 0x0000ff })
-      );
-      saw.position.set(length / 20, 0, 0);
-      scene.add(saw);
-      tools.push(saw);
-
-      // Frez palcowy
-      const cutter = new THREE.Mesh(
-        new THREE.CylinderGeometry(5, 5, 20, 32),
-        new THREE.MeshStandardMaterial({ color: 0xff0000 })
-      );
-      cutter.rotation.x = Math.PI / 2;
-      cutter.position.set(-length / 20, 0, 0);
-      scene.add(cutter);
-      tools.push(cutter);
-
-      // Wiertło poziome
-      const drill = new THREE.Mesh(
-        new THREE.CylinderGeometry(2, 2, 15, 16),
-        new THREE.MeshStandardMaterial({ color: 0x00aa00 })
-      );
-      drill.rotation.z = Math.PI / 2;
-      drill.position.set(0, 0, -width / 20);
-      scene.add(drill);
-      tools.push(drill);
-
-      // Narzędzie kanału
-      const channelTool = new THREE.Mesh(
-        new THREE.BoxGeometry(5, 5, 10),
-        new THREE.MeshStandardMaterial({ color: 0x8888ff })
-      );
-      channelTool.position.set(0, height / 20, 0);
-      scene.add(channelTool);
-      tools.push(channelTool);
-
-      // Wpust pionowy (slot)
-      const slotTool = new THREE.Mesh(
-        new THREE.BoxGeometry(4, 12, 4),
-        new THREE.MeshStandardMaterial({ color: 0xff9900 })
-      );
-      slotTool.position.set(length / 40, 0, width / 40);
-      scene.add(slotTool);
-      tools.push(slotTool);
-
-      // Czop (tenon) – symulowany jako frez poziomy
-      const tenonTool = new THREE.Mesh(
-        new THREE.BoxGeometry(12, 4, 4),
-        new THREE.MeshStandardMaterial({ color: 0x999900 })
-      );
-      tenonTool.position.set(-length / 40, 0, -width / 40);
-      scene.add(tenonTool);
-      tools.push(tenonTool);
-
-      function animate() {
-        requestAnimationFrame(animate);
-        cutter.rotation.z += 0.05;
-        drill.rotation.x += 0.03;
-        controls.update();
-        renderer.render(scene, camera);
+    function obliczWydajnosc() {
+      const ilosc = parseInt(document.getElementById('osoby').value);
+      let sumaGodzin = 0;
+      for (let i = 0; i < ilosc; i++) {
+        const val = parseFloat(document.getElementById('godzina-' + i).value) || 0;
+        sumaGodzin += val;
       }
 
-      animate();
+      const stropy = parsePolishExpression(document.getElementById('stropy').value);
+      const dachy = parsePolishExpression(document.getElementById('dachy').value);
+      const okna = document.getElementById('dodaj-okna').checked
+        ? parseInt(document.getElementById('okna').value) || 0
+        : 0;
+      const metryOkien = okna * 2.6;
+      const dachySumaryczne = dachy + metryOkien;
+
+      const normaStropy = 14.75;
+      const normaDachy = 15;
+
+      const wydajnoscStropy = (stropy / normaStropy) / (sumaGodzin / 8) * 100;
+      const wydajnoscDachy = (dachySumaryczne / normaDachy) / (sumaGodzin / 8) * 100;
+      const wydajnoscLaczna = wydajnoscStropy + wydajnoscDachy;
+
+      const wynikTekst =
+        'Wydajność stropów: ' + wydajnoscStropy.toFixed(2) + '%\n' +
+        'Wydajność dachów: ' + wydajnoscDachy.toFixed(2) + '%\n' +
+        'Wydajność łączna: ' + wydajnoscLaczna.toFixed(2) + '%';
+
+      document.getElementById('wynik').innerText = wynikTekst;
     }
+
+    generateGodziny();
   </script>
 </body>
 </html>
