@@ -1,283 +1,116 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kalkulator wydajności</title>
+  <meta charset="UTF-8">
+  <title>Demo Hundegger SPEED-Cut (zaawansowane)</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
     body {
-      background: linear-gradient(145deg, #1a1a1a, #2b2b2b);
-      color: #ffffff;
-      font-family: 'Roboto', sans-serif;
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: #fff;
       padding: 20px;
-      max-width: 500px;
+      border-radius: 10px;
+      max-width: 600px;
       margin: auto;
-      box-shadow: 0 0 30px rgba(0, 255, 195, 0.1);
-      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    h1 {
-      text-align: center;
+    input, select, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
       margin-bottom: 20px;
-      color: #00ffc3;
-      text-shadow: 2px 2px 10px #00ffc360;
-      font-size: 26px;
-      letter-spacing: 1px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-      color: #9efff4;
-    }
-
-    input[type="number"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 12px;
-      margin-top: 5px;
-      border: none;
-      border-radius: 10px;
-      background-color: #333;
-      color: #fff;
       font-size: 16px;
-      box-shadow: inset 0 0 5px #000;
     }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      background: linear-gradient(90deg, #00ffc3, #00bfa5);
-      color: #000;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 10px #00ffc3aa;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 20px #00ffc3;
-    }
-
-    .result {
-      background-color: #111;
-      border: 1px solid #00ffc3;
-      border-radius: 10px;
-      padding: 18px;
-      margin-top: 20px;
-      font-size: 18px;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(0, 255, 195, 0.3);
-      white-space: pre-line;
-    }
-
-    #legenda {
-      margin-top: 30px;
-      background-color: #191919;
-      padding: 20px;
-      border-radius: 12px;
-      border-left: 6px solid #00ffc3;
-      box-shadow: inset 0 0 10px #00ffc340;
-    }
-
-    #legenda h3 {
-      margin-top: 0;
-      color: #00ffc3;
-      font-size: 20px;
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .info-section {
-      margin-top: 40px;
-      padding: 20px;
-      background-color: #121212;
-      border-left: 4px solid #00bfff;
-      border-radius: 12px;
-    }
-
-    .info-section h3 {
-      color: #00bfff;
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-
-    .info-section p,
-    .info-section ul {
-      margin-left: 10px;
-      line-height: 1.6;
+    pre {
+      background-color: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <h1>Kalkulator wydajności</h1>
+  <div class="container">
+    <h2>Demo: Zaawansowane tworzenie elementu (BTL-style)</h2>
+    <label for="id">ID elementu:</label>
+    <input type="text" id="id" placeholder="np. BELKA001">
 
-  <label for="osoby">Ilość osób:</label>
-  <input type="number" id="osoby" min="1" value="1" onchange="generateGodziny()" />
+    <label for="length">Długość [mm]:</label>
+    <input type="number" id="length" placeholder="np. 4000">
 
-  <div id="godziny-container"></div>
+    <label for="width">Szerokość [mm]:</label>
+    <input type="number" id="width" placeholder="np. 120">
 
-  <label for="stropy">Metry stropów łącznie:</label>
-  <input type="tel" id="stropy" placeholder="np. 2,5+3,1+4,0" />
+    <label for="height">Wysokość [mm]:</label>
+    <input type="number" id="height" placeholder="np. 60">
 
-  <label for="dachy">Metry dachów łącznie:</label>
-  <input type="tel" id="dachy" placeholder="np. 5+2,6+4,4" />
+    <label for="material">Materiał:</label>
+    <input type="text" id="material" value="C24">
 
-  <label>
-    <input type="checkbox" id="dodaj-okna" onchange="toggleOknaInput()" />
-    Dodaj okna dachowe
-  </label>
-  <div id="okna-container" style="display:none;">
-    <label for="okna">Liczba okien dachowych:</label>
-    <input type="number" id="okna" min="0" value="0" />
-  </div>
+    <label for="angleStart">Kąt cięcia początku [°]:</label>
+    <input type="number" id="angleStart" placeholder="np. 90">
 
-  <button onclick="obliczWydajnosc()">Oblicz wydajność</button>
+    <label for="angleEnd">Kąt cięcia końca [°]:</label>
+    <input type="number" id="angleEnd" placeholder="np. 90">
 
-  <div class="result" id="wynik"></div>
+    <label for="rotation">Obrót elementu [°]:</label>
+    <input type="number" id="rotation" placeholder="np. 0">
 
-  <div id="legenda">
-    <h3>LEGENDA</h3>
-    <p>Metry brane pod uwagę:</p>
-    <ul>
-      <li>stropy – 14.75 m² na osobę na 8h</li>
-      <li>dachy – 15 m² na osobę na 8h</li>
-    </ul>
-    <p>Okno dachowe = + 2,60 m²</p>
-  </div>
+    <label for="hole">Otwory (średnica@pozycja; średnica@pozycja...):</label>
+    <input type="text" id="hole" placeholder="np. Ø12@1000;Ø8@1500">
 
-  <div class="info-section">
-    <h3>Piętro i kolory góra/dół</h3>
-    <p>
-      W piętrze obracać szerokie frezy do dołu (wyblakłe), niebieski to z góry.<br>
-      Mocny brąz: cięcie z góry.<br>
-      Mocny niebieski: cięcie z góry.<br>
-      Jasne – wszystko z dołu (frez). <strong><em>&larr; tak robić w miarę możliwości!</em></strong><br>
-      Skosy jasnym do góry
-    </p>
+    <label for="slot">Wpusty (szer.xgłęb.@pozycja; ...):</label>
+    <input type="text" id="slot" placeholder="np. 20x10@1500;30x12@2500">
 
-    <h3>USUWAĆ STANDARDOWE BELKI</h3>
-    <ul>
-      <li>60x80x2570</li>
-      <li>80×80×2570</li>
-      <li>60×120x2540</li>
-      <li>90x120x2540</li>
-      <li>100×120×2540</li>
-      <li>60x180x2540</li>
-      <li>90x180x2540</li>
-      <li>100x180x2540</li>
-    </ul>
+    <label for="tenon">Czopy (dł.xszer.xwys.; ...):</label>
+    <input type="text" id="tenon" placeholder="np. 40x20x30;50x25x35">
 
-    <h3>CIĘCIE ŁAT</h3>
-    <p>
-      Piła w tył, nie inaczej.<br>
-      POD MASZYNĄ (OPCJE – KOŁO ZĘBATE)<br>
-      DRUKARKA: LICZBA ETYKIET PRZY STOSIE:<br>
-      NA STOS 1 ETYKIETA = ŁATY STROPOWE (TYLKO)<br>
-      NA ELEMENT KONSTRUKCYJNY: RESZTA<br><br>
-      <strong>Łaty:</strong><br>
-      Liczba sztuk zadania: ilość łat do docięcia<br>
-      Pakiet: numer stropa<br>
-      Cięcie piłą w tył: wymiar wzdłużny to długość łat -5mm<br>
-      Reszta zostaje
-    </p>
+    <label for="channel">Kanały (szer.xgłęb.@od-do):</label>
+    <input type="text" id="channel" placeholder="np. 10x15@500-1500">
 
-    <h3>BŁĘDY</h3>
-    <p>
-      Resztka drzewnego nie jest zajęta: podsunąć po lewej stronie do blachy.<br>
-      Błąd krańcowego piły? – reset (żółty) i przetwarzanie.<br>
-      Rolka nie jest zajęta: dopchnąć belkę.<br>
-      Przy rolce z kołem (żółta dioda z dołu off – dopchnąć), reset, cofnąć, puścić i docisnąć.<br>
-      Piła się kręci, puszczasz start i nie idzie – reset żółty i na nowo start.<br>
-      Drewno surowe jest za krótkie: dopchnąć do blachy (dojechać przyciskiem) i powinno iść, jeśli nie to reset i jeszcze raz początek.<br>
-      Rolka pozycjonująca: reset i start.<br>
-      Czujka rozłącza – wyjechać i obrócić belkę.
-    </p>
+    <label for="cut">Nacięcia (głęb.@pozycja):</label>
+    <input type="text" id="cut" placeholder="np. 5@750;10@2500">
+
+    <label for="notes">Uwagi / operacje dodatkowe:</label>
+    <textarea id="notes" rows="3" placeholder="np. uwaga technologiczna lub opis ręczny"></textarea>
+
+    <button onclick="generateBTL()">Generuj</button>
+
+    <h3>Wynik:</h3>
+    <pre id="output">(brak danych)</pre>
   </div>
 
   <script>
-    function generateGodziny() {
-      const container = document.getElementById('godziny-container');
-      container.innerHTML = '';
-      const ilosc = parseInt(document.getElementById('osoby').value);
-      for (let i = 0; i < ilosc; i++) {
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.placeholder = 'Godziny osoby ' + (i + 1);
-        input.id = 'godzina-' + i;
-        input.step = '0.1';
-        input.style.marginTop = '10px';
-        input.style.width = '100%';
-        input.style.borderRadius = '8px';
-        input.style.border = 'none';
-        input.style.backgroundColor = '#333';
-        input.style.color = '#fff';
-        input.style.padding = '10px';
-        input.style.boxShadow = 'inset 0 0 5px #000';
-        container.appendChild(input);
-      }
+    function generateBTL() {
+      const getValue = id => document.getElementById(id).value;
+      const fields = [
+        { label: 'ID', value: getValue('id') },
+        { label: 'LENGTH', value: getValue('length') },
+        { label: 'WIDTH', value: getValue('width') },
+        { label: 'HEIGHT', value: getValue('height') },
+        { label: 'MATERIAL', value: getValue('material') },
+        { label: 'ANGLE_START', value: getValue('angleStart') },
+        { label: 'ANGLE_END', value: getValue('angleEnd') },
+        { label: 'ROTATION', value: getValue('rotation') },
+        { label: 'HOLES', value: getValue('hole') },
+        { label: 'SLOTS', value: getValue('slot') },
+        { label: 'TENONS', value: getValue('tenon') },
+        { label: 'CHANNELS', value: getValue('channel') },
+        { label: 'CUTS', value: getValue('cut') },
+        { label: 'NOTES', value: getValue('notes') }
+      ];
+
+      let output = '[ELEMENT]';
+      fields.forEach(f => {
+        if (f.value) output += `\n${f.label}=${f.value}`;
+      });
+
+      document.getElementById('output').textContent = output;
     }
-
-    function toggleOknaInput() {
-      const checkbox = document.getElementById('dodaj-okna');
-      const container = document.getElementById('okna-container');
-      container.style.display = checkbox.checked ? 'block' : 'none';
-    }
-
-    function parsePolishExpression(expr) {
-      try {
-        expr = expr.replace(/,/g, '.');
-        return Function('"use strict";return (' + expr + ')')();
-      } catch {
-        return 0;
-      }
-    }
-
-    function obliczWydajnosc() {
-      const ilosc = parseInt(document.getElementById('osoby').value);
-      let sumaGodzin = 0;
-      for (let i = 0; i < ilosc; i++) {
-        const val = parseFloat(document.getElementById('godzina-' + i).value) || 0;
-        sumaGodzin += val;
-      }
-
-      const stropy = parsePolishExpression(document.getElementById('stropy').value);
-      const dachy = parsePolishExpression(document.getElementById('dachy').value);
-      const okna = document.getElementById('dodaj-okna').checked
-        ? parseInt(document.getElementById('okna').value) || 0
-        : 0;
-      const metryOkien = okna * 2.6;
-      const dachySumaryczne = dachy + metryOkien;
-
-      const normaStropy = 14.75;
-      const normaDachy = 15;
-
-      const wydajnoscStropy = (stropy / normaStropy) / (sumaGodzin / 8) * 100;
-      const wydajnoscDachy = (dachySumaryczne / normaDachy) / (sumaGodzin / 8) * 100;
-      const wydajnoscLaczna = wydajnoscStropy + wydajnoscDachy;
-
-      const wynikTekst =
-        'Wydajność stropów: ' + wydajnoscStropy.toFixed(2) + '%\n' +
-        'Wydajność dachów: ' + wydajnoscDachy.toFixed(2) + '%\n' +
-        'Wydajność łączna: ' + wydajnoscLaczna.toFixed(2) + '%';
-
-      document.getElementById('wynik').innerText = wynikTekst;
-    }
-
-    generateGodziny();
   </script>
 </body>
 </html>
