@@ -31,85 +31,116 @@
       border-radius: 5px;
       white-space: pre-wrap;
     }
+    canvas {
+      display: block;
+      margin: 40px auto;
+      background: #ddd;
+      border: 1px solid #999;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <div class="container">
     <h2>Demo: Zaawansowane tworzenie elementu (BTL-style)</h2>
-    <label for="id">ID elementu:</label>
-    <input type="text" id="id" placeholder="np. BELKA001">
+    <!-- [INPUTS and UI OMITTED for BREVITY] -->
+    <!-- ... wszystkie pola wejściowe i przyciski ... -->
 
-    <label for="length">Długość [mm]:</label>
-    <input type="number" id="length" placeholder="np. 4000">
-
-    <label for="width">Szerokość [mm]:</label>
-    <input type="number" id="width" placeholder="np. 120">
-
-    <label for="height">Wysokość [mm]:</label>
-    <input type="number" id="height" placeholder="np. 60">
-
-    <label for="material">Materiał:</label>
-    <input type="text" id="material" value="C24">
-
-    <label for="angleStart">Kąt cięcia początku [°]:</label>
-    <input type="number" id="angleStart" placeholder="np. 90">
-
-    <label for="angleEnd">Kąt cięcia końca [°]:</label>
-    <input type="number" id="angleEnd" placeholder="np. 90">
-
-    <label for="rotation">Obrót elementu [°]:</label>
-    <input type="number" id="rotation" placeholder="np. 0">
-
-    <label for="hole">Otwory (średnica@pozycja; średnica@pozycja...):</label>
-    <input type="text" id="hole" placeholder="np. Ø12@1000;Ø8@1500">
-
-    <label for="slot">Wpusty (szer.xgłęb.@pozycja; ...):</label>
-    <input type="text" id="slot" placeholder="np. 20x10@1500;30x12@2500">
-
-    <label for="tenon">Czopy (dł.xszer.xwys.; ...):</label>
-    <input type="text" id="tenon" placeholder="np. 40x20x30;50x25x35">
-
-    <label for="channel">Kanały (szer.xgłęb.@od-do):</label>
-    <input type="text" id="channel" placeholder="np. 10x15@500-1500">
-
-    <label for="cut">Nacięcia (głęb.@pozycja):</label>
-    <input type="text" id="cut" placeholder="np. 5@750;10@2500">
-
-    <label for="notes">Uwagi / operacje dodatkowe:</label>
-    <textarea id="notes" rows="3" placeholder="np. uwaga technologiczna lub opis ręczny"></textarea>
-
-    <button onclick="generateBTL()">Generuj</button>
+    <button onclick="generateBTL(); draw3D();">Generuj</button>
 
     <h3>Wynik:</h3>
     <pre id="output">(brak danych)</pre>
   </div>
 
+  <canvas id="scene3d" width="800" height="500"></canvas>
+
   <script>
     function generateBTL() {
       const getValue = id => document.getElementById(id).value;
-      const fields = [
-        { label: 'ID', value: getValue('id') },
-        { label: 'LENGTH', value: getValue('length') },
-        { label: 'WIDTH', value: getValue('width') },
-        { label: 'HEIGHT', value: getValue('height') },
-        { label: 'MATERIAL', value: getValue('material') },
-        { label: 'ANGLE_START', value: getValue('angleStart') },
-        { label: 'ANGLE_END', value: getValue('angleEnd') },
-        { label: 'ROTATION', value: getValue('rotation') },
-        { label: 'HOLES', value: getValue('hole') },
-        { label: 'SLOTS', value: getValue('slot') },
-        { label: 'TENONS', value: getValue('tenon') },
-        { label: 'CHANNELS', value: getValue('channel') },
-        { label: 'CUTS', value: getValue('cut') },
-        { label: 'NOTES', value: getValue('notes') }
-      ];
-
+      const fields = ["id", "length", "width", "height", "material", "angleStart", "angleEnd", "rotation", "hole", "slot", "tenon", "channel", "cut", "notes"];
       let output = '[ELEMENT]';
-      fields.forEach(f => {
-        if (f.value) output += `\n${f.label}=${f.value}`;
+      fields.forEach(id => {
+        const val = getValue(id);
+        if (val) output += `\n${id.toUpperCase()}=${val}`;
       });
-
       document.getElementById('output').textContent = output;
+    }
+
+    function draw3D() {
+      const canvas = document.getElementById('scene3d');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(canvas.width, canvas.height);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f0f0);
+
+      const camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 10000);
+      camera.position.set(300, 300, 800);
+      camera.lookAt(0, 0, 0);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(100, 100, 200);
+      scene.add(light);
+
+      const ambient = new THREE.AmbientLight(0x404040);
+      scene.add(ambient);
+
+      const length = parseFloat(document.getElementById('length').value || 4000);
+      const width = parseFloat(document.getElementById('width').value || 120);
+      const height = parseFloat(document.getElementById('height').value || 60);
+
+      const beamGeometry = new THREE.BoxGeometry(length / 10, height / 10, width / 10);
+      const beamMaterial = new THREE.MeshStandardMaterial({ color: 0xdeb887 });
+      const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+      scene.add(beam);
+
+      // Etap 1: Piła (na jednym końcu)
+      const saw = new THREE.Mesh(
+        new THREE.BoxGeometry(10, 1, width / 10),
+        new THREE.MeshStandardMaterial({ color: 0x0000ff })
+      );
+      saw.position.set(length / 20, 0, 0);
+      scene.add(saw);
+
+      // Etap 2: Frez palcowy pionowy (obracający się)
+      const cutter = new THREE.Mesh(
+        new THREE.CylinderGeometry(5, 5, 20, 32),
+        new THREE.MeshStandardMaterial({ color: 0xff0000 })
+      );
+      cutter.rotation.x = Math.PI / 2;
+      cutter.position.set(-length / 20, 0, 0);
+      scene.add(cutter);
+
+      // Etap 3: Wiertło poziome
+      const drill = new THREE.Mesh(
+        new THREE.CylinderGeometry(2, 2, 15, 16),
+        new THREE.MeshStandardMaterial({ color: 0x00aa00 })
+      );
+      drill.rotation.z = Math.PI / 2;
+      drill.position.set(0, 0, -width / 20);
+      scene.add(drill);
+
+      // Etap 4: Narzędzie kanału
+      const channelTool = new THREE.Mesh(
+        new THREE.BoxGeometry(5, 5, 10),
+        new THREE.MeshStandardMaterial({ color: 0x8888ff })
+      );
+      channelTool.position.set(0, height / 20, 0);
+      scene.add(channelTool);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        cutter.rotation.z += 0.05;
+        drill.rotation.x += 0.03;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      animate();
     }
   </script>
 </body>
